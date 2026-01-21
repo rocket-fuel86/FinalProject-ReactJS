@@ -76,6 +76,11 @@ function CartPage() {
                     className="form-control mb-3"
                     placeholder="Full name"
                   />
+                  <input
+                    type="text"
+                    className="form-control mb-3"
+                    placeholder="Address"
+                  />
 
                   <button className="btn btn-primary w-100">
                     Place order

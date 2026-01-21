@@ -1,4 +1,10 @@
 import { Link, NavLink } from "react-router"
+import Category from "../models/Category"
+
+const categories = [
+    new Category({ id: 1, name: "Electronics" }),
+    new Category({ id: 2, name: "Clothes" }),
+]
 
 function Navbar({ logo }) {
     return (
@@ -17,8 +23,9 @@ function Navbar({ logo }) {
                                 Categories
                             </a>
                             <ul className="dropdown-menu">
-                                <li><Link className="dropdown-item" to="/category/1">Electronics</Link></li>
-                                <li><Link className="dropdown-item" to="/category/2">Clothes</Link></li>
+                                {categories.map(category => (
+                                    <li><Link className="dropdown-item" to={`/category/${category.id}`}>{category.name}</Link></li>
+                                ))}
                             </ul>
                         </li>
                         <li className="nav-item">
