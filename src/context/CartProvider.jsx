@@ -4,14 +4,17 @@ import { Cart } from "../models/Cart"
 
 function loadCart() {
   const saved = localStorage.getItem("cart");
-
-  if (!saved) {
-    return new Cart();
-  }
+  if (!saved) return new Cart();
 
   try {
     const parsed = JSON.parse(saved);
-    return new Cart(parsed.items || []);
+
+    return new Cart(
+      (parsed.items || []).map(item => ({
+        product: item.product,
+        count: item.count
+      }))
+    );
   } catch {
     return new Cart();
   }

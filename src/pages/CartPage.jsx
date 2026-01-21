@@ -1,8 +1,48 @@
-import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+import { useContext, useState } from "react"
+import { CartContext } from "../context/CartContext"
+import { Order } from "../models/Order"
 
 function CartPage() {
-  const { cart, dispatch } = useContext(CartContext);
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [fullname, setFullname] = useState("")
+  const [address, setAddress] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const { cart, dispatch } = useContext(CartContext)
+
+  async function handleOrder(e) {
+    e.preventDefault()
+
+    const order = new Order({
+      fullname,
+      email,
+      phone,
+      address,
+      cart
+    })
+
+    try {
+      setLoading(true)
+
+      const res = await fetch("http://rocketfuel.mywebcommunity.org/php/add_order.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order.toJSON())
+      })
+
+      res.json()
+
+      if (!res.ok) throw new Error("Order failed")
+      
+      dispatch({ type: "CLEAR" })
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
 
   return (
     <section className="py-5">
@@ -59,40 +99,51 @@ function CartPage() {
             <div className="col-12 col-lg-4">
               <div className="card p-4">
                 <h5 className="mb-3">Checkout</h5>
+                  <form onSubmit={handleOrder}>
+                    <input
+                      type="email"
+                      className="form-control mb-3"
+                      placeholder="Email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="tel"
+                      className="form-control mb-3"
+                      placeholder="Phone"
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="text"
+                      className="form-control mb-3"
+                      placeholder="Full name"
+                      value={fullname}
+                      onChange={e => setFullname(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="text"
+                      className="form-control mb-3"
+                      placeholder="Address"
+                      value={address}
+                      onChange={e => setAddress(e.target.value)}
+                      required
+                    />
 
-                <form>
-                  <input
-                    type="email"
-                    className="form-control mb-3"
-                    placeholder="Email"
-                  />
-                  <input
-                    type="tel"
-                    className="form-control mb-3"
-                    placeholder="Phone"
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-3"
-                    placeholder="Full name"
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-3"
-                    placeholder="Address"
-                  />
-
-                  <button className="btn btn-primary w-100">
-                    Place order
-                  </button>
-                </form>
+                    <button className="btn btn-primary w-100" disabled={loading}>
+                      {loading ? "Sending..." : "Place order"}
+                    </button>
+                  </form>
               </div>
             </div>
           </div>
         )}
       </div>
     </section>
-  );
+  )
 }
 
 export default CartPage;

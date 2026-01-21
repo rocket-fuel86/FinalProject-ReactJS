@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router"
 import Category from "../models/Category"
+import React from "react"
 
 const categories = [
     new Category({ id: 1, name: "Electronics" }),
@@ -24,7 +25,9 @@ function Navbar({ logo }) {
                             </a>
                             <ul className="dropdown-menu">
                                 {categories.map(category => (
-                                    <li><Link className="dropdown-item" to={`/category/${category.id}`}>{category.name}</Link></li>
+                                    <React.Fragment key={category.id}>
+                                        <li><Link className="dropdown-item" to={`/category/${category.id}`}>{category.name}</Link></li>
+                                    </React.Fragment>
                                 ))}
                             </ul>
                         </li>
